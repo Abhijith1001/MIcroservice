@@ -10,7 +10,9 @@ const app = express();
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 const EMAIL_TO = "abhijiithb@gmail.com";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_51SOB4iGt8XhRuxWJEWkAvAjqjxLOl8fsxDAx7GJOm3sXMnjzugZynDIwgYnkCvqIkj3p4q8qE9LNTGdYtRiEPTrj00J8VdgupO", {
+const key = "sk_test_51SOB4iGt8XhRuxWJEWkAvAjqjxLOl8fsxDAx7GJOm3sXMnjzugZynDIwgYnkCvqIkj3p4q8qE9LNTGdYtRiEPTrj00J8VdgupO"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || key, {
   apiVersion: "2022-11-15",
 });
 
