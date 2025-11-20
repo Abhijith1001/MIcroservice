@@ -25,7 +25,7 @@ const SuccessPage = () => {
 
     const verify = async () => {
       try {
-        await axios.post("http://localhost:7000/payment/verify", {
+        await axios.post("http://ec2-3-7-59-155.ap-south-1.compute.amazonaws.com:7000/payment/verify", {
           sessionId,
         });
         setState("success");
