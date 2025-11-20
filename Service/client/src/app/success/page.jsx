@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import axios from "axios";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,7 +12,7 @@ const STATUS = {
   missing: "Invalid session. Please start checkout again.",
 };
 
-const SuccessPage = () => {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const router = useRouter();
@@ -52,6 +53,12 @@ const SuccessPage = () => {
       )}
     </div>
   );
-};
+}
 
-export default SuccessPage;
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center"><p>Loading...</p></div>}>
+      <SuccessContent />
+    </Suspense>
+  );
+}
