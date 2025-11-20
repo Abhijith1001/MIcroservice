@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react";
+
 import { useCreateProduct } from "../../api/products";
 
 function CreateProductPage() {
@@ -30,10 +31,11 @@ function CreateProductPage() {
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-1" htmlFor="tenant-db-uri">
             Tenant DB URI
           </label>
           <input
+            id="tenant-db-uri"
             className="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={tenantDbUri}
             onChange={(e) => setTenantDbUri(e.target.value)}
@@ -46,8 +48,9 @@ function CreateProductPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
+          <label className="block text-sm font-medium mb-1" htmlFor="product-name">Name</label>
           <input
+            id="product-name"
             className="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -56,9 +59,10 @@ function CreateProductPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Price</label>
+          <label className="block text-sm font-medium mb-1" htmlFor="product-price">Price</label>
           <input
             type="number"
+            id="product-price"
             className="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
@@ -67,10 +71,11 @@ function CreateProductPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-1" htmlFor="product-description">
             Description
           </label>
           <textarea
+            id="product-description"
             className="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
