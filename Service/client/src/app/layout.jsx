@@ -1,6 +1,6 @@
 "use client";
-import { Bell, House, Search, ShoppingCart, TicketPercent } from "lucide-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Bell, House, Search, ShoppingCart, TicketPercent } from "lucide-react";
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";

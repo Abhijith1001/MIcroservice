@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Minus } from "lucide-react";
+import Image from "next/image";
 
 import Pay from "@/components/Pay";
 
