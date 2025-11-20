@@ -1,6 +1,6 @@
 {
-    "buildCommand": "cd Service/client && npm run build",
+    "buildCommand": "npm --prefix Service/client run build",
     "outputDirectory": "Service/client/.next",
-    "installCommand": "cd Service/client && npm install",
+    "installCommand": "npm install --prefix Service/client",
     "framework": "nextjs"
 }
