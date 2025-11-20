@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
 import axios from "axios";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 
 const STATUS = {
   verifying: "Verifying payment...",
