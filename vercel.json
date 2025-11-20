@@ -3,5 +3,4 @@
     "outputDirectory": "Service/client/.next",
     "installCommand": "cd Service/client && npm install",
     "framework": "nextjs",
-    "rootDirectory": "Service/client"
 }
