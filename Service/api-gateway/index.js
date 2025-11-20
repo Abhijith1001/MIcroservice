@@ -10,7 +10,8 @@ const SERVICE_MAP = {
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*", // Allow Netlify and Localhost
+    credentials: true,
   })
 );
 

@@ -11,7 +11,7 @@ const Pay = ({ cart }) => {
 
   const { isPending, isError, mutate } = useMutation({
     mutationFn: async (cart) => {
-      const response = await axios.post("http://localhost:7000/payment", {
+      const response = await axios.post("http://ec2-3-7-59-155.ap-south-1.compute.amazonaws.com:7000/payment", {
         cart,
       });
       return response.data;
