@@ -1,8 +1,8 @@
 "use client";
 
+import axios from "axios";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 const STATUS = {
   verifying: "Verifying payment...",
