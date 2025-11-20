@@ -1,6 +1,7 @@
-import Pay from "@/components/Pay";
-import { Minus } from "lucide-react";
 import Image from "next/image";
+import { Minus } from "lucide-react";
+
+import Pay from "@/components/Pay";
 
 const Page = () => {
   const cart = [
