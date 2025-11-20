@@ -109,6 +109,30 @@ services:
     networks:
       - microservices-net
 
+  tenant-service:
+    build:
+      context: ./Service/tenant-service
+    container_name: tenant-service
+    env_file:
+      - ./Service/tenant-service/.env
+    ports:
+      - "4100:4100"
+    restart: unless-stopped
+    networks:
+      - microservices-net
+  
+  product-service:
+    build:
+      context: ./Service/product-service
+    container_name: product-service
+    env_file:
+      - ./Service/product-service/.env
+    ports:
+      - "4300:4300"
+    restart: unless-stopped
+    networks:
+      - microservices-net
+
   api-gateway:
     build:
       context: ./Service/api-gateway

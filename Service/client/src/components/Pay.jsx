@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { Loader2, ShoppingCart } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Pay = ({ cart }) => {
   const total = cart.reduce((acc, item) => acc + item.price, 0).toFixed(2);
@@ -103,6 +104,32 @@ const Pay = ({ cart }) => {
         )}
       </button>
       {isError && <span className="text-xs text-red-500">Something went wrong!</span>}
+
+      <div className="mt-6 rounded-2xl border border-gray-100 bg-gray-50/60 p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gray-400">
+          Multi-tenant controls
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <Link
+            href="/tenent"
+            className="rounded-xl border border-slate-200 bg-white p-3 text-sm shadow-sm transition hover:border-slate-300 hover:shadow"
+          >
+            <p className="font-semibold text-gray-900">Tenant registration</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Configure a new storefront and grab the tenant DB URI.
+            </p>
+          </Link>
+          <Link
+            href="/product"
+            className="rounded-xl border border-slate-200 bg-white p-3 text-sm shadow-sm transition hover:border-slate-300 hover:shadow"
+          >
+            <p className="font-semibold text-gray-900">Create product</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Seed demo products using the tenant connection details.
+            </p>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };
