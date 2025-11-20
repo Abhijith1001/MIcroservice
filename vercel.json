@@ -2,5 +2,5 @@
     "buildCommand": "cd Service/client && npm run build",
     "outputDirectory": "Service/client/.next",
     "installCommand": "cd Service/client && npm install",
-    "framework": "nextjs",
+    "framework": "nextjs"
 }
