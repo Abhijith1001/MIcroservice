@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import CreateProductPage from "@/app/product/page";
+
 import { useRegisterTenant } from "../../api/tenants";
 
 function TenantRegisterPage() {
