@@ -10,7 +10,7 @@ const SERVICE_MAP = {
   product: process.env.PRODUCT_SERVICE_BASE || "http://localhost:4300/api",
 };
 
-const ALLOWED_ORIGINS = (process.env.GATEWAY_ALLOWED_ORIGINS || "http://localhost:3000,http://localhost:5173")
+const ALLOWED_ORIGINS = (process.env.GATEWAY_ALLOWED_ORIGINS || "http://localhost:3000,http://localhost:5173,https://microservice-pi.vercel.app/,*")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
