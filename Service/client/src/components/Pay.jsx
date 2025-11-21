@@ -5,6 +5,8 @@ import axios from "axios";
 import { Loader2, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { API_GATEWAY_BASE } from "../api/config";
+
 
 const Pay = ({ cart }) => {
   const total = cart.reduce((acc, item) => acc + item.price, 0).toFixed(2);
@@ -12,7 +14,7 @@ const Pay = ({ cart }) => {
 
   const { isPending, isError, mutate } = useMutation({
     mutationFn: async (cart) => {
-      const response = await axios.post("http://localhost:7000/payment", {
+      const response = await axios.post(`${API_GATEWAY_BASE}/payment`, {
         cart,
       });
       return response.data;

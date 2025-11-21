@@ -7,7 +7,7 @@ import { Kafka } from "kafkajs";
 dotenv.config();
 
 const app = express();
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const CLIENT_URL = process.env.CLIENT_URL || "https://microservice-pi.vercel.app"; //,http://localhost:3000
 const EMAIL_TO = "abhijiithb@gmail.com";
 
 const key = "sk_test_51SOB4iGt8XhRuxWJEWkAvAjqjxLOl8fsxDAx7GJOm3sXMnjzugZynDIwgYnkCvqIkj3p4q8qE9LNTGdYtRiEPTrj00J8VdgupO"

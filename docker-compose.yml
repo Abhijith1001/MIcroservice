@@ -145,8 +145,8 @@ services:
       - PAYMENT_SERVICE_BASE=http://payment-service:8000/payment-service
       - TENANT_SERVICE_BASE=http://tenant-service:4100/api
       - PRODUCT_SERVICE_BASE=http://product-service:4300/api
-      - GATEWAY_ALLOWED_ORIGINS=http://localhost:3000
-      - CLIENT_URL=http://localhost:3000
+      - GATEWAY_ALLOWED_ORIGINS=http://localhost:3000,https://microservice-pi.vercel.app
+      - CLIENT_URL=http://localhost:3000,https://microservice-pi.vercel.app
     depends_on:
       - payment-service
     restart: unless-stopped

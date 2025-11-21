@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { API_GATEWAY_BASE } from "../../api/config";
 
 const STATUS = {
   verifying: "Verifying payment...",
@@ -25,7 +26,7 @@ function SuccessContent() {
 
     const verify = async () => {
       try {
-        await axios.post("http://localhost:7000/payment/verify", { //ec2-3-7-59-155.ap-south-1.compute.amazonaws.com
+        await axios.post(`${API_GATEWAY_BASE}/payment/verify`, { //ec2-3-7-59-155.ap-south-1.compute.amazonaws.com
           sessionId,
         });
         setState("success");
