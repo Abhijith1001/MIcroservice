@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+
 import { API_GATEWAY_BASE } from "../../api/config";
 
 const STATUS = {

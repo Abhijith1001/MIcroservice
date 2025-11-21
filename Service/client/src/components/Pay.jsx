@@ -5,6 +5,7 @@ import axios from "axios";
 import { Loader2, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
 import { API_GATEWAY_BASE } from "../api/config";
 
 
