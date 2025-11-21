@@ -6,16 +6,58 @@ const app = express();
 
 const SERVICE_MAP = {
   payment: process.env.PAYMENT_SERVICE_BASE || "http://localhost:8000/payment-service",
+  tenant: process.env.TENANT_SERVICE_BASE || "http://localhost:4100/api",
+  product: process.env.PRODUCT_SERVICE_BASE || "http://localhost:4300/api",
 };
+
+const ALLOWED_ORIGINS = (process.env.GATEWAY_ALLOWED_ORIGINS || "http://localhost:3000,http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const ALLOWED_HEADERS = [
+  "Content-Type",
+  "Authorization",
+  "X-Requested-With",
+  "x-tenant-id",
+  "x-tenant-db-uri",
+  "x-tenant-sig",
+];
 
 app.use(
   cors({
-    origin: "*", // Allow Netlify and Localhost
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (ALLOWED_ORIGINS.includes("*") || ALLOWED_ORIGINS.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Origin not allowed by CORS"));
+    },
     credentials: true,
+    allowedHeaders: ALLOWED_HEADERS,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })
 );
 
 app.use(express.json());
+
+// Force CORS headers on gateway responses (preflight + proxied)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (ALLOWED_ORIGINS.includes("*") || ALLOWED_ORIGINS.includes(origin))) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Vary", "Origin");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", ALLOWED_HEADERS.join(", "));
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
 
 const proxyRequest = async (targetUrl, req, res, next) => {
   try {
