@@ -1,0 +1,136 @@
+Total pages: 3
+
+================================================================================
+
+--- Page 1 ---
+
+Auto Subdomain Setup + SEO Indexing (Ubuntu 22.04
++ Cloudflare DNS Plugin)
+Generated: 2025-11-05 06:49 UTC
+This deployment manual walks you through creating automatic subdomains for a SaaS platform,
+configuring Nginx, obtaining a wildcard SSL certificate via Let's Encrypt (DNS-01 challenge), and
+preparing each store for Google indexing (SEO). Each step includes: purpose, commands, expected
+output, and common pitfalls.
+■ STEP 1 — Create Wildcard DNS Record
+■ Purpose: Allow all subdomains (like seller1.leopardstore.com) to point to your server automatically.
+■ Commands / Action:
+Login to your DNS provider (e.g., Cloudflare, GoDaddy, Route53) and create this record:
+Type: A
+Name: *.leopardstore.com
+Value: <YOUR_SERVER_PUBLIC_IP>
+TTL: 3600
+■ Verify:
+ping -c 1 test.leopardstore.com
+If you get your server's IP as reply, DNS is working.
+■ STEP 2 — Install and Enable Nginx
+■ Purpose: Nginx will act as a reverse proxy and SSL terminator.
+■ Commands:
+sudo apt update && sudo apt install -y nginx
+sudo systemctl enable nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+■ Expected Output: Status should show 'active (running)'.
+■ STEP 3 — Configure Nginx to Proxy to Node.js
+■ Purpose: Route incoming HTTPS traffic from all subdomains to your Node app.
+■ File: /etc/nginx/sites-available/leopardstore.conf
+server {
+  listen 80;
+  server_name .leopardstore.com leopardstore.com;
+  return 301 https://$host$request_uri;
+}
+server {
+  listen 443 ssl http2;
+  server_name .leopardstore.com leopardstore.com;
+
+
+================================================================================
+
+--- Page 2 ---
+
+  ssl_certificate /etc/letsencrypt/live/leopardstore.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/leopardstore.com/privkey.pem;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  location / {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_pass http://127.0.0.1:3000;
+  }
+}
+■ Activate config:
+sudo ln -s /etc/nginx/sites-available/leopardstore.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+■ STEP 4 — Get Wildcard SSL Certificate with Certbot + Cloudflare
+■ Purpose: Enable HTTPS for all subdomains using a single wildcard certificate.
+■ Commands:
+sudo apt install -y certbot python3-certbot-dns-cloudflare
+sudo mkdir -p /root/.secrets/certbot
+sudo chmod 700 /root/.secrets/certbot
+sudo nano /root/.secrets/certbot/cloudflare.ini
+# Add inside the file:
+dns_cloudflare_api_token = 0123456789abcdef...
+sudo chmod 600 /root/.secrets/certbot/cloudflare.ini
+sudo certbot certonly   --dns-cloudflare   --dns-cloudflare-credentials /root/.secrets/certbot/cloudflare.ini   -d "leopardstore.com" -d "*.leopardstore.com"   --agree-tos --no-eff-email --email admin@leopardstore.com
+■ Verify certificates:
+sudo ls /etc/letsencrypt/live/leopardstore.com/
+You should see files: privkey.pem, fullchain.pem
+■■ Common Issue: Permission denied → ensure credentials file is chmod 600.
+■ STEP 5 — Node.js Tenant Resolver
+■ Purpose: Identify which store (subdomain) is being requested and load its data.
+■ Code Example:
+// middleware/tenantResolver.js
+import Store from '../models/Store.js';
+export async function tenantResolver(req, res, next) {
+  const host = (req.headers.host || '').split(':')[0];
+  if (!host) return next();
+  if (host === 'leopardstore.com' || host === 'www.leopardstore.com') return next();
+  const subdomain = host.split('.')[0];
+  const store = await Store.findOne({ subdomain });
+
+
+================================================================================
+
+--- Page 3 ---
+
+  if (!store) return res.status(404).send('Store not found');
+  req.store = store;
+  next();
+}
+// app.js
+import { tenantResolver } from './middleware/tenantResolver.js';
+app.use(tenantResolver);
+■ STEP 6 — Test the Entire Flow
+■ Commands:
+curl -I https://test.leopardstore.com
+# or
+ping test.leopardstore.com
+■ Expected Result: HTTP 200 from Nginx, SSL padlock in browser, DNS resolves correctly.
+■ STEP 7 — SEO Indexing Setup
+■ Purpose: Make each seller store discoverable by Google.
+■ Steps:
+1. Create robots.txt for each store:
+   User-agent: *
+   Allow: /
+   Sitemap: https://{subdomain}.leopardstore.com/sitemap.xml
+2. Generate sitemap.xml dynamically for store products.
+3. Use SSR (Next.js or Express SSR) to render meta tags per store:
+   <title>{store_name} | LeopardStore</title>
+   <meta name="description" content="{store_description}" />
+4. Add each subdomain to Google Search Console (URL prefix or domain property).
+5. Ping Google:
+   curl "http://www.google.com/ping?sitemap=https://{subdomain}.leopardstore.com/sitemap.xml"
+■ Expected: Store indexed in 3–5 days after sitemap submission.
+■■ Tip: Encourage unique product names & descriptions per seller for better ranking.
+■ Final Checklist
+[ ] DNS wildcard resolves correctly
+[ ] Nginx proxy & HTTPS working
+[ ] Certbot auto-renew configured
+[ ] Node tenantResolver functional
+[ ] Store loads via subdomain
+[ ] robots.txt + sitemap.xml accessible
+[ ] Google Search Console verified
+
+
+================================================================================
