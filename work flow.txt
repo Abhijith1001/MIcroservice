@@ -1,0 +1,220 @@
+🚀 HIGH-LEVEL WORKFLOW FOR YOUR SaaS (Combined from all PDFs)
+1️⃣ Seller Signup → Store Creation
+
+Seller registers on main platform and selects subscription plan 
+
+SaaS_eCommerce_project_overview
+
+API sends request to Tenant Service to create store
+
+Tenant Service:
+
+Sanitizes subdomain
+
+Generates tenantId
+
+Creates dedicated DB for store
+
+Saves tenant record in registry DB
+
+Returns access URL store1.leopardstore.com 
+
+AUTOMATIC_SUBDOMAIN_SETUP_GUIDE
+
+User is redirected automatically to the newly created subdomain
+
+Expert Improvement:
+→ Run validation for reserved subdomains (admin, api, mail, etc.) before creation to avoid conflicts (PDF already recommends this).
+→ Also block special characters, uppercase and spaces.
+
+2️⃣ Automatic Subdomain Resolution
+
+You do NOT manually add subdomain DNS entries.
+
+Because:
+
+Cloudflare DNS wildcard * → server IP
+
+Nginx server_name .leopardstore.com leopardstore.com handles all subdomains 
+
+auto_subdomain_setup_guide_mixed
+
+Wildcard SSL certificate via Certbot covers every subdomain automatically 
+
+auto_subdomain_setup_guide_mixed
+
+Expert Improvement:
+→ Add Certbot auto-renew cron job so certificate doesn't expire.
+
+3️⃣ Frontend Rendering per Store
+
+You deploy ONE single React build, not one per store.
+
+*.leopard.com → Netlify → same build for all subdomains 
+
+multi_tenant_frontend_solution
+
+getTenantSlug() reads hostname and extracts store1, store2 etc. 
+
+multi_tenant_frontend_step_by_s…
+
+Frontend calls API with header x-tenant: store1 so backend knows which DB to use 
+
+multi_tenant_frontend_solution
+
+Expert Improvements:
+
+Put tenant info in Zustand context so components don’t recalculate slug every render.
+
+Cache theme / store branding response in localStorage with TTL to reduce API calls.
+
+4️⃣ API Gateway Routing
+
+All API traffic goes through one central gateway (port 7000 by Nginx config).
+
+Gateway:
+
+Resolves tenant from header
+
+Forwards request to Microservices (product, payment etc.)
+
+Handles CORS and security 
+
+AUTOMATIC_SUBDOMAIN_SETUP_GUIDE
+
+Expert Improvement:
+→ Add request logging including tenantId, endpoint, and response time.
+
+5️⃣ Seller Dashboard (Admin UI for Each Store)
+
+Once logged in to their store URL:
+
+Add products
+
+Add categories
+
+Configure shipping, policies, store details
+
+View orders & analytics
+
+Configure Razorpay (platform key or their own) 
+
+SaaS_eCommerce_project_overview
+
+Expert Improvement:
+→ Use feature flags based on subscription plan limits (product count, order limits, themes, etc.).
+
+6️⃣ Customer Journey
+
+Customer visits store subdomain or custom domain
+
+Browses products
+
+Adds items to cart
+
+Checkout via Razorpay
+
+Order logs saved to tenant DB
+
+Notifications sent via SMS/WhatsApp/push 
+
+SaaS_eCommerce_project_overview
+
+Expert Improvement:
+→ Add abandoned cart cron reminder for higher conversion.
+
+7️⃣ Super Admin Journey
+
+From master Admin panel:
+
+See all sellers
+
+See their categories, plans, payments
+
+Track revenue, renewals, churn
+
+Assign promo codes & marketing people 
+
+SaaS_eCommerce_project_overview
+
+Expert Improvement:
+→ Add Stripe Connect / Razorpay Route later to automate payout splitting.
+
+8️⃣ SEO & Search Console
+
+Each store needs its own SEO footprint, not shared.
+
+Per tenant:
+
+robots.txt
+
+sitemap.xml
+
+dynamic meta tags (SSR recommended) 
+
+auto_subdomain_setup_guide_mixed
+
+Expert Improvement:
+→ Add auto Search Console API integration so seller doesn’t need to manually verify sitemap.
+
+9️⃣ Infrastructure Deployment
+
+Based on AWS EC2 deployment workflow:
+
+SSH to EC2
+
+Install Node, Nginx, PM2
+
+Clone services
+
+Add .env files
+
+Start processes via PM2
+
+Get wildcard SSL via Certbot 
+
+AWS_EC2_DEPLOYMENT_COMMANDS
+
+Expert Improvement:
+→ Later move to AWS ECS or Kubernetes once you reach 300+ tenants and high traffic.
+
+🔥 THE SHORT VERSION (No confusion)
+
+| Step              | Process                     | Who handles it      |
+| ----------------- | --------------------------- | ------------------- |
+| Seller signs up   | Store created + DB created  | Tenant Service      |
+| DNS               | No manual subdomains        | Cloudflare wildcard |
+| SSL               | One wildcard certificate    | Certbot             |
+| Routing           | All requests to gateway     | Nginx               |
+| Tenant resolution | Based on subdomain          | Frontend + backend  |
+| Data isolation    | Separate DB per tenant      | Tenant Service      |
+| Frontend          | One build                   | Netlify             |
+| APIs              | `x-tenant` decides DB       | Gateway             |
+| Payments          | Razorpay per tenant         | Payment Service     |
+| SEO               | robots + sitemap per tenant | Gateway / SSR       |
+
+💡 Biggest flaws you should fix before scaling
+
+| Risk                    | Problem                             | Fix                                    |
+| ----------------------- | ----------------------------------- | -------------------------------------- |
+| Too many DB connections | Creating new connection per request | Use connection pooling + cache         |
+| No rate limiting        | Bots can spam checkout              | Add rate limiting per tenant           |
+| Payment webhooks        | Can run twice                       | Use idempotency keys                   |
+| Themes system           | If you rebuild per theme = suicide  | Use config-based theming only          |
+| Analytics               | DB heavy                            | Push events async to Kafka/Redis later |
+
+⭐ Final Recommendations (Critical)
+
+If you want this project to actually launch and earn money:
+
+Stop adding microservices until MVP is live
+
+Release with 1 payment provider first (Razorpay)
+
+Provide only 1 theme at start — store needs function before beauty
+
+Add custom domain mapping later, not now
+
+Subscriptions can be manual renewal initially — automate later
+
+

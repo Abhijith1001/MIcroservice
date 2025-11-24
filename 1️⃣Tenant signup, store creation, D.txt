@@ -1,0 +1,106 @@
+1️⃣Tenant signup, store creation, DB provisioning
+2️⃣ Product management
+3️⃣ Checkout + orders
+4️⃣ Payments
+5️⃣ Storefront website
+6️⃣ Themes, plugins, analytics, AI, etc. → later
+
+                  ┌───────────────────┐
+   Client  ─────> │   API Gateway     │
+                  └────────┬──────────┘
+                           │
+                  ┌────────┴───────────┐
+                  │  Tenant Service    │  (creates tenant, db, subdomain)
+                  └────────┬───────────┘
+                           │
+       ┌───────────────────┴──────────────────────┐
+       │                                          │
+┌──────┴─────────┐                        ┌───────┴───────────┐
+│  Core Service  │                        │ Payment Service   │
+│ (products +    │<───────Redis──────────>│ (gateway +        │
+│  orders +      │                        │ webhooks)         │
+│  cart/checkout)│                        └───────────────────┘
+└────────────────┘
+        │
+        │  (per-tenant Mongo DBs)
+        ▼
+   MongoDB Atlas
+
+
+
+
+5️⃣ MVP Roadmap (what to build, in order)
+
+Think in milestones, not months.
+
+✅ Phase 1 – Tenant + DB foundation
+
+Tenant registration API:
+
+POST /api/tenants with:
+
+store name
+
+owner email
+
+Generate:
+
+tenantId
+
+subdomain slug: store-slug
+
+Create:
+
+Tenant record in global DB (like leopard_master)
+
+Per-tenant Mongo DB or logically separated collections
+
+Connection manager:
+
+One module that:
+
+Given tenantId, returns a cached Mongo connection for that tenant
+
+Very important: reuse connections, don’t create new per request.
+
+Middleware:
+
+Extract tenant from:
+
+hostname (store1.leopard.com) or
+
+header x-tenant-id
+
+Attach tenantContext to req so services use correct DB.
+
+✅ Phase 2 – Products
+
+Product model per tenant DB:
+
+Fields: title, price, stock, images, slug, status.
+
+Add indexes:
+
+slug
+
+status
+
+maybe categoryId
+
+APIs:
+
+POST /products
+
+GET /products
+
+GET /products/:slug
+
+PUT /products/:id
+
+DELETE /products/:id
+
+Make sure:
+
+All queries are tenant-aware.
+
+Pagination is implemented from day 1 (no find() without limits).

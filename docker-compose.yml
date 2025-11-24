@@ -25,6 +25,11 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
       CLUSTER_ID: 8PSE0GzTRqGdlGcX0TWKJg
       KAFKA_HEAP_OPTS: "-Xmx400m -Xms400m"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 550M
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "9092"]
       interval: 10s
@@ -46,6 +51,12 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       KAFKA_CLUSTERS_0_READONLY: "false"
       KAFKA_CLUSTERS_0_TOPIC_AUTO_CREATE: "true"
+      JAVA_OPTS: "-Xms128m -Xmx256m"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: 300M
     networks:
       - microservices-net
 
