@@ -1,0 +1,22 @@
+1. Auth Service
+2. Tenant Service (DB per tenant + plans + theme settings)
+3. API Gateway (detect subdomain → resolve tenant → inject DB)
+4. Wildcard Subdomain + Nginx Automation
+5. React Frontend – Single Build, dynamic based on tenant
+6. Product Service
+7. Order Service
+8. Payment Service
+9. Notification Service
+
+
+
+
+| DB          | Collection        | Purpose                               |
+| ----------- | ----------------- | ------------------------------------- |
+| saas_master | users             | identity + login                      |
+| saas_master | tenants           | store metadata + subdomain + dbName   |
+| saas_master | tenantEmployees   | employees assigned to a store         |
+| saas_master | tenantPermissions | access control per employee per store |
+| tenant_xxx  | products          | store-specific data                   |
+| tenant_xxx  | orders            | store-specific data                   |
+| tenant_xxx  | etc…              | store-specific data                   |
